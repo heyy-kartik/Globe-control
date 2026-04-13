@@ -1,35 +1,39 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber';
-import { Stars, OrbitControls } from '@react-three/drei';
+import { Canvas, useLoader } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
+import { TextureLoader, BackSide } from 'three';
 import GlobeModel from './GlobeModel';
+
+function MilkyWay() {
+  const starmap = useLoader(TextureLoader, '/Gaia_EDR3_darkened.png');
+  return (
+    <mesh>
+      <sphereGeometry args={[100, 64, 64]} />
+      <meshBasicMaterial map={starmap} side={BackSide} />
+    </mesh>
+  );
+}
 
 export default function GlobeScene() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 4], fov: 45 }}
+      camera={{ position: [0, 0, 8], fov: 45 }}
       className="w-full h-full"
       gl={{ antialias: true }}
     >
       {/* Ambient light for overall brightness */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.1} />
+      
       {/* Directional "sun" light */}
-      <directionalLight position={[5, 3, 5]} intensity={1.2} />
+      <directionalLight position={[5, 1, -2]} intensity={2.2} />
+      
       {/* Subtle hemisphere light for day/night mood */}
-      <hemisphereLight args={['#1a2a4a', '#000010', 0.3]} />
-
-      {/* Starfield background */}
-      <Stars
-        radius={100}
-        depth={50}
-        count={5000}
-        factor={4}
-        saturation={0}
-        fade
-      />
+      <hemisphereLight args={['#ffffff', '#000000', 0.2]} />
 
       <Suspense fallback={null}>
+        <MilkyWay />
         <GlobeModel />
       </Suspense>
 
